@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glitch>
+	<handlers defaultClassname="ezbake.glitch.handler.DefaultHandler">
+		<handler 
+			classname="ezbake.glitch.handler.FilePrintHandler">
+			<exceptionClassname>ezbake.glitch.exception.ShadyBunchException</exceptionClassname>	
+			<exceptionClassname>ezbake.glitch.exception.WhoDatException</exceptionClassname>	
+		</handler>
+		<handler
+			classname="ezbake.glitch.handler.ConsolePrintHandler">
+			<exceptionClassname>ezbake.glitch.exception.PiqueException</exceptionClassname>	
+		</handler>
+	</handlers>
+</glitch>
