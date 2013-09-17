@@ -33,7 +33,7 @@ public class ConfigurationTest {
       Collection<String> handlers = config.getExceptionHandlers(exceptionFqcn);
       Assert.assertTrue("The handler should have added successfully and, thus, returned true.", result);
       Assert.assertEquals("The size of handler collection is incorrect.", 1, handlers.size());
-      Assert.assertEquals("Expected " + handlerFqcn + " in the results.", handlerFqcn, handlers.contains(handlerFqcn));
+      Assert.assertTrue("Expected " + handlerFqcn + " in the results.", handlers.contains(handlerFqcn));
    }
    
    /**
@@ -102,7 +102,7 @@ public class ConfigurationTest {
    /**
     * addDefaultHandler
     * <p>
-    * 
+    * Validates that adding a default handler is functional.
     * </p>
     */
    @Test
@@ -119,6 +119,12 @@ public class ConfigurationTest {
       Assert.assertTrue("The default handler collection is missing " + handlerFqcn + ".", defaultHandlers.contains(handlerFqcn));
    }
    
+   /**
+    * addDefaultHandler
+    * <p>
+    * Validates that adding multiple default handlers is functional.
+    * </p>
+    */
    @Test
    public void addMultipleDefaultHandlers() {
       
@@ -143,6 +149,14 @@ public class ConfigurationTest {
       Assert.assertTrue("Expected " + handler3Fqcn + " in the results.", handlers.contains(handler3Fqcn));
    }
    
+   /**
+    * addDefaultHandler
+    * <p>
+    * Validates that adding duplicate default handlers will not result in
+    * duplicate values in the default handler collection. Duplicate values
+    * should be ignored.
+    * </p>
+    */
    @Test
    public void addDuplicateDefaultHandlers() {
       
@@ -156,6 +170,108 @@ public class ConfigurationTest {
       Assert.assertFalse("The default handler " + handlerFqcn + " is a duplicate and, thus, should return false.", result);
 
       Collection<String> handlers = config.getDefaultHandlers();
+      Assert.assertEquals("The size of handler collection is incorrect.", 1, handlers.size());
+      Assert.assertTrue("Expected " + handlerFqcn + " in the results.", handlers.contains(handlerFqcn));
+   }
+   
+   /**
+    * getExceptionHandlers
+    * <p>
+    * 
+    * </p>
+    */
+   @Test
+   public void getExceptionHandlersExplicitMapping() {
+      
+      String exceptionFqcn = "ezbake.glitch.exception.DefaultException";
+      String handler1Fqcn = "ezbake.glitch.handler.DefaultExceptionHandler";
+      String handler2Fqcn = "ezbake.glitch.handler.CounterExceptionHandler";
+      
+      Configuration config = new Configuration();
+      config.addDefaultHandler(handler1Fqcn);
+      config.addExceptionHandler(exceptionFqcn, handler2Fqcn);
+      
+      Collection<String> handlers = config.getExceptionHandlers(exceptionFqcn);
+      Assert.assertEquals("The size of handler collection is incorrect.", 1, handlers.size());
+      Assert.assertTrue("Expected " + handler2Fqcn + " in the results.", handlers.contains(handler2Fqcn));
+   }
+   
+   /**
+    * getExceptionHandlers
+    * <p>
+    * Validates that when getExceptionHandlers when the exception has no explicit
+    * handlers that the default handler is returned when useDefault=true and that
+    * the default is not returned when useDefault=false.
+    * </p>
+    */
+   @Test
+   public void getExceptionHandlerWithNoMappingButWithDefault() {
+      
+      String exceptionFqcn = "ezbake.glitch.exception.DefaultException";
+      String handlerFqcn = "ezbake.glitch.handler.DefaultExceptionHandler";
+      
+      Configuration config = new Configuration();
+      config.addDefaultHandler(handlerFqcn);
+      
+      Collection<String> handlers = config.getExceptionHandlers(exceptionFqcn);
+      Assert.assertEquals("The size of handler collection is incorrect.", 1, handlers.size());
+      Assert.assertTrue("Expected " + handlerFqcn + " in the results.", handlers.contains(handlerFqcn));
+      
+      handlers = config.getExceptionHandlers(exceptionFqcn, true);
+      Assert.assertEquals("The size of handler collection is incorrect (calling with useDefault=true).", 1, handlers.size());
+      Assert.assertTrue("Expected " + handlerFqcn + " in the results.", handlers.contains(handlerFqcn));
+     
+      handlers = config.getExceptionHandlers(exceptionFqcn, false);
+      Assert.assertEquals("The size of handler collection is incorrect (calling with useDefault=false).", 0, handlers.size());
+   }
+   
+   /**
+    * getAllHandlers
+    * <p>
+    * Validates that a configuration with multiple default and exception handlers
+    * are all accounted for when getAllHandlers is called.
+    * </p>
+    */
+   public void getHandlersWithMultipleDefaultAndExceptionHandlers() {
+      
+      String exception1Fqcn = "ezbake.glitch.exception.HelloException";
+      String handler1Fqcn = "ezbake.glitch.handler.HelloExceptionHandler";
+      String exception2Fqcn = "ezbake.glitch.exception.SomeException";
+      String handler2Fqcn = "ezbake.glitch.handler.SomeExceptionHandler";
+      String defaultHandler1Fqcn = "ezbake.glitch.handler.DefAExceptionHandler";
+      String defaultHandler2Fqcn = "ezbake.glitch.handler.DefBExceptionHandler";
+     
+      Configuration config = new Configuration();
+      config.addDefaultHandler(defaultHandler1Fqcn);
+      config.addDefaultHandler(defaultHandler2Fqcn);
+      config.addExceptionHandler(exception1Fqcn, handler1Fqcn);
+      config.addExceptionHandler(exception2Fqcn, handler2Fqcn);
+      
+      Collection<String> handlers = config.getAllHandlers();
+      Assert.assertEquals("The size of handler collection is incorrect.", 4, handlers.size());
+      Assert.assertTrue("Expected " + handler1Fqcn + " in the results.", handlers.contains(handler1Fqcn));
+      Assert.assertTrue("Expected " + handler2Fqcn + " in the results.", handlers.contains(handler2Fqcn));
+      Assert.assertTrue("Expected " + defaultHandler1Fqcn + " in the results.", handlers.contains(defaultHandler1Fqcn));
+      Assert.assertTrue("Expected " + defaultHandler2Fqcn + " in the results.", handlers.contains(defaultHandler2Fqcn));
+   }
+   
+   /**
+    * getAllHandlers
+    * <p>
+    * Validates that when the default and exception handlers are the same that
+    * the results from getAllHandlers does not return duplicates.
+    * </p>
+    */
+   public void getHandlersWithSameHandlerForDefaultAndException() {
+      
+      String exceptionFqcn = "ezbake.glitch.exception.DefaultException";
+      String handlerFqcn = "ezbake.glitch.handler.DefaultExceptionHandler";
+      
+      Configuration config = new Configuration();
+      config.addDefaultHandler(handlerFqcn);
+      config.addExceptionHandler(exceptionFqcn, handlerFqcn);
+      
+      Collection<String> handlers = config.getAllHandlers();
       Assert.assertEquals("The size of handler collection is incorrect.", 1, handlers.size());
       Assert.assertTrue("Expected " + handlerFqcn + " in the results.", handlers.contains(handlerFqcn));
    }
