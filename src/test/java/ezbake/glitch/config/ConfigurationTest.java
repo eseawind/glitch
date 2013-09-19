@@ -102,6 +102,42 @@ public class ConfigurationTest {
    /**
     * addDefaultHandler
     * <p>
+    * Validates that adding a null class name value is not added to the
+    * collection.
+    * </p>
+    */
+   @Test
+   public void addNullDefaultHandler() {
+      
+      Configuration config = new Configuration();
+      Assert.assertEquals("The config was just instantiated; the default handler collection size should be zero.", 0, config.getDefaultHandlers().size());
+      
+      boolean result = config.addDefaultHandler(null);
+      Assert.assertEquals("A null default handler was added; the default handler collection size should still be zero.", 0, config.getDefaultHandlers().size());
+      Assert.assertFalse("The null value was not added to the defualt handler collection; result should indicate that with a false.", result);
+   }
+   
+   /**
+    * addDefaultHandler
+    * <p>
+    * Validates that adding an empty string class name value is not added to
+    * the collection.
+    * </p>
+    */
+   @Test
+   public void addEmptyDefaultHandler() {
+      
+      Configuration config = new Configuration();
+      Assert.assertEquals("The config was just instantiated; the default handler collection size should be zero.", 0, config.getDefaultHandlers().size());
+      
+      boolean result = config.addDefaultHandler("    ");
+      Assert.assertEquals("An empty default handler was added; the default handler collection size should still be zero.", 0, config.getDefaultHandlers().size());
+      Assert.assertFalse("The empty value was not added to the defualt handler collection; result should indicate that with a false.", result);
+   }
+   
+   /**
+    * addDefaultHandler
+    * <p>
     * Validates that adding a default handler is functional.
     * </p>
     */
@@ -174,6 +210,86 @@ public class ConfigurationTest {
       Assert.assertTrue("Expected " + handlerFqcn + " in the results.", handlers.contains(handlerFqcn));
    }
    
+   /**
+    * addExceptionHandler
+    * <p>
+    * Validates that adding a null handler class name value to the exception
+    * handler collection is ignored because of null value.
+    * </p>
+    */
+   @Test
+   public void addExceptionHandlerWithNullException() {
+      
+      String exceptionFqcn = null;
+      String handlerFqcn = "ezbake.glitch.handler.DefaultExceptionHandler";
+      Configuration config = new Configuration();
+      Assert.assertEquals("The config was just instantiated; the exception handler collection size should be zero.", 0, config.getExceptionHandlers(exceptionFqcn).size());
+      
+      boolean result = config.addExceptionHandler(exceptionFqcn, handlerFqcn);
+      Assert.assertEquals("With null exception the exception handler collection size should still be zero.", 0, config.getDefaultHandlers().size());
+      Assert.assertFalse("With null exception no entry added to the exception handler collection; result should indicate that with a false.", result);
+   }
+   
+   /**
+    * addExceptionHandler
+    * <p>
+    * Validates that adding a null exception class name value to exception
+    * handler collection is ignored because of null value.
+    * </p>
+    */
+   @Test
+   public void addExceptionHandlerWithNullHandler() {
+      
+      String exceptionFqcn = "ezbake.glitch.exception.DefaultException";
+      String handlerFqcn = null;
+      Configuration config = new Configuration();
+      Assert.assertEquals("The config was just instantiated; the exception handler collection size should be zero.", 0, config.getExceptionHandlers(exceptionFqcn).size());
+      
+      boolean result = config.addExceptionHandler(exceptionFqcn, handlerFqcn);
+      Assert.assertEquals("With null handler value the exception handler collection size should still be zero.", 0, config.getDefaultHandlers().size());
+      Assert.assertFalse("With null handler no entry added to the exception handler collection; result should indicate that with a false.", result);
+   }
+   
+   /**
+    * addExceptionHandler
+    * <p>
+    * Validates that adding an empty string handler class name value to the
+    * exception handler collection is ignored because of the empty value.
+    * </p>
+    */
+   @Test
+   public void addExceptionHandlerWithEmptyException() {
+      
+      String exceptionFqcn = "";
+      String handlerFqcn = "ezbake.glitch.handler.DefaultExceptionHandler";
+      Configuration config = new Configuration();
+      Assert.assertEquals("The config was just instantiated; the exception handler collection size should be zero.", 0, config.getExceptionHandlers(exceptionFqcn).size());
+      
+      boolean result = config.addExceptionHandler(exceptionFqcn, handlerFqcn);
+      Assert.assertEquals("With empty exception the exception handler collection size should still be zero.", 0, config.getDefaultHandlers().size());
+      Assert.assertFalse("With empty exception no entry added to the exception handler collection; result should indicate that with a false.", result);
+   }
+   
+   /**
+    * addExceptionHandler
+    * <p>
+    * Validates that adding an empty string exception class name value to
+    * exception handler collection is ignored because of the empty value.
+    * </p>
+    */
+   @Test
+   public void addExceptionHandlerWithEmptyHandler() {
+      
+      String exceptionFqcn = "ezbake.glitch.exception.DefaultException";
+      String handlerFqcn = "";
+      Configuration config = new Configuration();
+      Assert.assertEquals("The config was just instantiated; the exception handler collection size should be zero.", 0, config.getExceptionHandlers(exceptionFqcn).size());
+      
+      boolean result = config.addExceptionHandler(exceptionFqcn, handlerFqcn);
+      Assert.assertEquals("With null handler value the exception handler collection size should still be zero.", 0, config.getDefaultHandlers().size());
+      Assert.assertFalse("With null handler no entry added to the exception handler collection; result should indicate that with a false.", result);
+   }
+
    /**
     * getExceptionHandlers
     * <p>

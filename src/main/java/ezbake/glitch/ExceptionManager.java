@@ -5,10 +5,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ezbake.glitch.config.Configuration;
+import ezbake.glitch.config.XmlConfigurationParser;
 
 
 /**
@@ -43,7 +45,7 @@ public final class ExceptionManager {
 
    private static ExceptionManager instance;
    
-   private Logger logger = Logger.getLogger(ExceptionManager.class.getName());
+   private Logger logger = LoggerFactory.getLogger(ExceptionManager.class);
    private Configuration configuration; 
    private Map<String, CoreExceptionHandler> handlers; 
    
@@ -122,10 +124,13 @@ public final class ExceptionManager {
    
    /**
     * <p>
-    * Executes the handlers associated with the given exception. 
+    * Executes the handlers associated with the given exception. If no
+    * associated handlers exist for the exception then the default handlers
+    * are executed.
     * </p>
     * 
-    * @param exception
+    * @param exception The exception instance that is to be handled. Handling
+    *       is ignored if no exception is provided.
     */
    public static void handleException(CoreException exception) {
       
@@ -134,11 +139,17 @@ public final class ExceptionManager {
    
    /**
     * <p>
+    * Executes the handlers associated with the given exception. If no
+    * associated handlers exist for the exception then the default handlers
+    * are executed.
     * </p>
-    *  
-    * @param exception
+    * 
+    * @param exception The exception instance that is to be handled. Handling
+    *       is ignored if no exception is provided.
     */
    public void handle(CoreException exception) {
+      
+      if (exception == null) return;
       
       String exceptionFqcn = exception.getClass().getName();
       Collection<String> handlerFqcns = configuration.getExceptionHandlers(exceptionFqcn);
@@ -152,22 +163,34 @@ public final class ExceptionManager {
          try {
             CoreExceptionHandler handler = handlers.get(handlerFqcn);
             if (handler == null) {
-               logger.log(Level.INFO, "Handler '" + handlerFqcn + "' was not found; ignoring this handler's processing for exception type '" + exceptionFqcn + "'. Verify that the handler's namespace/package is correct and that it is in the runtime classpath.");
+               logger.info("Handler '" + handlerFqcn + "' was not found; ignoring this handler's processing for exception type '" + exceptionFqcn + "'. Verify that the handler's namespace/package is correct and that it is in the runtime classpath.");
             }
             handler.handle(exception);
          } catch (Exception e) {
-            logger.log(Level.SEVERE, "Handler '" + handlerFqcn + "' encountered errors when executing handler processing for exception type '" + exceptionFqcn + "'.", e);
+            logger.error("Handler '" + handlerFqcn + "' encountered errors when executing handler processing for exception type '" + exceptionFqcn + "'.", e);
          }
       }
    }
    
-   
+   /**
+    * <p>
+    * Obtains the configuration settings from a user-configured file.
+    * </p>
+    * 
+    * @return  The configuration settings as defined in the configuration file.
+    */
    private Configuration readConfiguration() {
       
-      // TODO: look for configuration file.
-      return null;
+      return XmlConfigurationParser.load();
    }
    
+   /**
+    * <p>
+    * Obtains all the handlers defined in the configuration and instantiates
+    * each one. A handler that cannot be instantiated will have all its
+    * mappings removed.
+    * </p>
+    */
    private void instantiateHandlers() {
 
       ArrayList<String> badHandlers = new ArrayList<String>();
@@ -213,7 +236,7 @@ public final class ExceptionManager {
             Class<CoreExceptionHandler> handlerClass = (Class<CoreExceptionHandler>) Class.forName(fqcn);
             handler = handlerClass.newInstance();
          } catch (Exception e) {
-            logger.log(Level.SEVERE,
+            logger.error(
                   "The handler '" + fqcn + "' could be found or could not be instantiated; ingoring all references and associations to this handler. Adjust the configuration to use a valid, locatable handler.", 
                   e);
          }

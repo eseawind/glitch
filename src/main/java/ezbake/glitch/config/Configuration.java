@@ -63,7 +63,9 @@ public class Configuration {
    /**
     * <p>
     * Adds a fully qualified class name to the default handler set. The class
-    * must be a {@link ezbake.glitch.CoreExceptionHandler} type.
+    * must be a {@link ezbake.glitch.CoreExceptionHandler} type. A null or 
+    * empty parameter value is ignored and, thus, not added to the default
+    * handler collection.
     * </p>
     * 
     * @param defaultHandlerFqcn A fully qualified class name to add to the set
@@ -73,7 +75,7 @@ public class Configuration {
     */
    public boolean addDefaultHandler(String defaultHandlerFqcn) {
       
-      if (defaultHandlerFqcn == null) {
+      if (isNothing(defaultHandlerFqcn)) {
          return false;
       }
       return this.defaultHandlers.add(defaultHandlerFqcn);
@@ -81,39 +83,19 @@ public class Configuration {
    
    /**
     * <p>
-    * Adds the collection of fully qualified class names to the default handler
-    * set. The classes must be a {@link ezbake.glitch.CoreExceptionHandler}
-    * type.
-    * </p>
-    * 
-    * @param defaultHandlerFqcns A collection of fully qualified class names to
-    *       add to the set of default handlers used by this configuration.
-    * @return true if this default handler set changed as a result of the add
-    *       and false if it did not.
-    */
-   public boolean addDefaultHandlers(Collection<String> defaultHandlerFqcns) {
-      
-      if (defaultHandlers == null) {
-         return false;
-      }
-      return this.defaultHandlers.addAll(defaultHandlers);
-   }
-   
-   /**
-    * <p>
     * Associates an exception class with a handler class. The handler will
     * process the exception in a manner specific to the handler. No
-    * exception-handler association is added if a) the handler is null or
-    * empty or b) the exception is null or empty. 
+    * exception-handler association is added if either the handler or exception
+    * is null or empty. 
     * </p>
     * <p>
     * An exception may have multiple handlers associated to it; each will
     * provide some action whenever that exception is thrown and processed.
     * </p>
     * 
-    * @param exceptionFqcn The fully qualified class name of the exception to
-    *       that is handled by handlerFqcn. If the value is null or empty then
-    *       the association is not added.
+    * @param exceptionFqcn The fully qualified class name of the exception that
+    *       is handled by handlerFqcn. If the value is null or empty then the
+    *       association is not added.
     * @param handlerFqcn The fully qualified class name of the handler. If the
     *       value is null or empty then the association is not added.
     * @return true if the entry was added and false if not.
@@ -125,6 +107,29 @@ public class Configuration {
          return false;
       }
       return handlerMap.put(exceptionFqcn, handlerFqcn);
+   }
+   
+   /**
+    * <p>
+    * Associates the handler class to all the exception classes. No exception-
+    * handler association is added if either the handler or exception is null
+    * or empty
+    * </p>
+    * 
+    * @param handlerFqcn The fully qualified class name of the handler that is
+    *       associated with each exception in the exception collection. If the
+    *       value is null or empty then no association is made. 
+    * @param exceptionFqcns A collection of fully qualified class names of the
+    *       exceptions to associate with the given handler. If the an exception
+    *       in the collection is null or empty then that association is ignored.
+    */
+   public void addHandlerExceptions(String handlerFqcn, Collection<String> exceptionFqcns) {
+      
+      if (!isNothing(handlerFqcn) || exceptionFqcns == null) {
+         for (String exceptionFqcn : exceptionFqcns) {
+            addExceptionHandler(exceptionFqcn, handlerFqcn);
+         }
+      }
    }
    
    /**
@@ -217,7 +222,7 @@ public class Configuration {
       return value == null || value.trim().isEmpty();
    }
    
-   // This may develop into a bi-map for better manipulation and removal.
+   // TODO: decide whether or not to develop into a bi-map for better manipulation and removal. addressing removeHandlerRefs may be a problem w/o bi-map.
    static class ExceptionHandlerMap {
       
       private ArrayList<String> exceptionFqcns;

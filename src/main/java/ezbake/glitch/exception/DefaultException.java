@@ -1,7 +1,5 @@
 package ezbake.glitch.exception;
 
-import java.io.PrintStream;
-
 import ezbake.glitch.CoreException;
 
 /**
@@ -50,19 +48,6 @@ public class DefaultException extends Exception implements CoreException {
    public Exception getException() {
       
       return this;
-   }
-
-   /**
-    * <p>
-    * Writes the stack trace associated with this exception to the given output
-    * stream.
-    * </p>
-    * 
-    * @param out The output stream to which this stack trace is written.
-    */
-   public void printStackTrace(PrintStream out) {
-      
-      this.printStackTrace(out);
    }
    
 }
