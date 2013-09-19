@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glitch>
+	<defaultHandlers>
+		<classname>ezbake.glitch.handler.DefaultHandler</classname>
+	</defaultHandlers>
+	<handlers>
+		<handler>
+			<classname>ezbake.glitch.handler.FilePrintHandler</classname>
+			<exceptions>
+				<classname>ezbake.glitch.exception.SoWhatException</classname>
+				<classname>ezbake.glitch.exception.WhoDatException</classname>
+			</exceptions>
+		</handler>
+		<handler>
+			<classname>ezbake.glitch.handler.ConsolePrintHandler</classname>
+			<exceptions>
+				<classname>ezbake.glitch.exception.SoWhatException</classname>
+				<classname>ezbake.glitch.exception.BooHooException</classname>
+				<classname>ezbake.glitch.exception.DunnoException</classname>
+			</exceptions>
+		</handler>
+	</handlers>
+</glitch>
