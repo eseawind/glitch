@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ezbake.glitch.config.Configuration;
-import ezbake.glitch.config.XmlConfigurationParser;
+import ezbake.glitch.config.ConfigurationParserFactory;
 
 
 /**
@@ -174,14 +174,15 @@ public final class ExceptionManager {
    
    /**
     * <p>
-    * Obtains the configuration settings from a user-configured file.
+    * Obtains the handler settings and mappings from the configuration file.
     * </p>
     * 
-    * @return  The configuration settings as defined in the configuration file.
+    * @return  The handler settings and mappings as defined in the
+    *       configuration file.
     */
    private Configuration readConfiguration() {
       
-      return XmlConfigurationParser.load();
+      return ConfigurationParserFactory.getParser().getConfiguration();
    }
    
    /**

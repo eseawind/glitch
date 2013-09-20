@@ -18,53 +18,109 @@ import org.w3c.dom.NodeList;
  * the XML format.
  * </p>
  * <p>
- * NOTE: This will be redone because the current implementation, while working,
+ * The default configuration file name is <b>glitch-config.xml</b>. Set the
+ * resource name attribute to override the default.
+ * </p>
+ * <p>
+ * TODO: This will be redone because the current implementation, while working,
  * is not very readable. Instead of using the DOM parser, the XPATH parser will
  * be used.
  * </p>
  */
-public class XmlConfigurationParser {
+public final class XmlConfigurationParser implements ConfigurationParser {
    
-   private static final String CONFIG_FILENAME = "glitch-config.xml";
    private Logger logger = LoggerFactory.getLogger(XmlConfigurationParser.class);
+   
+   private static final String DEFAULT_CONFIG_RESOURCE_NAME = "glitch-config.xml";
+   
    private Configuration configuration;
    private Document document;
+   private String resourceName;
    
+   /**
+    * <p>
+    * Creates in instance of the XML configuration file parser. It is expected
+    * that the configuration file is using the default name.
+    * </p>
+    */
    public XmlConfigurationParser() {
+      
+      this(DEFAULT_CONFIG_RESOURCE_NAME);
+   }
+   
+   /**
+    * <p>
+    * Creates an instance of this XML configuration parser. The configuration
+    * file parse is the resource name given. It is expected that the resource
+    * name is on the classpath. 
+    * </p>
+    * 
+    * @param configResourceName The name of the xml configuration file that
+    *       this instance will parse. If null or empty then the default
+    *       resource name is used.
+    */
+   public XmlConfigurationParser(String configResourceName) {
+      
       this.configuration = new Configuration();
+      this.setResourceName(configResourceName);
+   }
+   
+   /**
+    * <p>
+    * Sets the resource name of the XML configuration file that this class
+    * instance will parse.
+    * </p>
+    * 
+    * @param configResourceName The name of the xml configuration file that
+    *       this instance will parse. If null or empty then the default
+    *       resource name is used.
+    */
+   private void setResourceName(String configResourceName) {
+      
+      if (configResourceName == null || configResourceName.trim().length() == 0) {
+         this.resourceName = DEFAULT_CONFIG_RESOURCE_NAME;
+      } else {
+         this.resourceName = configResourceName;
+      }
    }
 
    public static void main(String[] args) {
       
       try {
          XmlConfigurationParser parser = new XmlConfigurationParser();
-         parser.read();
+         parser.getConfiguration();
       } catch (Exception e) {
          e.printStackTrace();
       }
    }
-   
-   public static Configuration load() {
-   
-      XmlConfigurationParser parser = new XmlConfigurationParser();
-      parser.read();
-      return parser.configuration;
-   }
-   
-   public void read() {
+
+   /**
+    * 
+    */
+   public Configuration getConfiguration() {
       
       loadConfigurationFile();
       configureDefaultHandlers();
-      configureExceptionHandlers();      
+      configureExceptionHandlers();
+      return this.configuration;
+   }
+   
+   /**
+    * 
+    */
+   public Configuration getConfiguration(String resouceName) {
+
+      setResourceName(resourceName);
+      return getConfiguration();
    }
    
    private void loadConfigurationFile() {
       
       ClassLoader loader = this.getClass().getClassLoader();
-      InputStream configInputStream = loader.getResourceAsStream(CONFIG_FILENAME);
+      InputStream configInputStream = loader.getResourceAsStream(DEFAULT_CONFIG_RESOURCE_NAME);
       
       if (configInputStream == null) {
-         logger.warn("The exception handling configuration file," + CONFIG_FILENAME + ", was not found.");
+         logger.warn("The exception handling configuration file," + DEFAULT_CONFIG_RESOURCE_NAME + ", was not found.");
       } else {
          try {
             
@@ -72,7 +128,7 @@ public class XmlConfigurationParser {
             builderFactory.setIgnoringComments(true);
             document = builderFactory.newDocumentBuilder().parse(configInputStream);
          } catch (Exception e) {
-            logger.error("An error occurred while parsing the " + CONFIG_FILENAME + " configuration file.", e);
+            logger.error("An error occurred while parsing the " + DEFAULT_CONFIG_RESOURCE_NAME + " configuration file.", e);
          }
       }
    }
@@ -153,10 +209,4 @@ public class XmlConfigurationParser {
       
       return exceptionList;
    }
-   
-   public Configuration getConfiguration() {
-      
-      return configuration;
-   }
-   
 }
