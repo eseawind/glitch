@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glitch>
+	<defaultHandlers>
+		<classname>Test01ExceptionHandler</classname>
+		<classname>Test02ExceptionHandler</classname>
+	</defaultHandlers>
+	<handlers>
+		<handler>
+			<classname>Test03ExceptionHandler</classname>
+			<exceptions>
+				<classname>TestAException</classname>
+			</exceptions>
+		</handler>
+		<handler>
+			<classname>Test04ExceptionHandler</classname>
+			<exceptions>
+				<classname>TestAException</classname>
+				<classname>TestBException</classname>
+				<classname>TestCException</classname>
+			</exceptions>
+		</handler>
+	</handlers>
+</glitch>

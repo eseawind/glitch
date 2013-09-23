@@ -11,7 +11,7 @@ import org.junit.Test;
  * </p>
  */
 public class ConfigurationTest {
-
+   
    /**
     * addExceptionHandler
     * getExceptionHandlers

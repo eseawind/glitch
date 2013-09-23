@@ -9,7 +9,7 @@ import ezbake.glitch.CoreExceptionHandler;
  * An exception handler used specifically for unit testing.
  * </p>
  */
-public class CounterExceptionHandler implements CoreExceptionHandler {
+public class CounterHandler implements CoreExceptionHandler {
 
    private int counter = 0;
    

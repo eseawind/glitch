@@ -11,7 +11,7 @@ import ezbake.glitch.CoreException;
  * An exception handler used specifically for unit testing.
  * </p>
  */
-public class MessageListExceptionHandler {
+public class MessageListHandler {
 
    private List<String> messages = new ArrayList<String>();
    
