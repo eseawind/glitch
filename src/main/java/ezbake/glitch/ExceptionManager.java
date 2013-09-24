@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +59,8 @@ public final class ExceptionManager {
     * @see  #getInstance() to obtain an ExceptionManager instance.
     */
    private ExceptionManager() {
-      
-      this.readConfiguration();
-      this.instantiateHandlers();
+
+      this(null);
    }
    
    /**
@@ -75,7 +75,7 @@ public final class ExceptionManager {
     */
    private ExceptionManager(Configuration configuration) {
       
-      this.configuration = configuration;
+      this.setConfiguration(configuration);
       this.instantiateHandlers();
    }
    
@@ -107,7 +107,8 @@ public final class ExceptionManager {
     * </p>
     * <p>
     * A null configuration is permissible. The result will be that no mappings
-    * are specified. Thus, there will be an absence of exception handling.
+    * are specified. Thus, there will be an absence of exception handling. Note
+    * that this call avoids reading and loading a configuration file.
     * </p>
     * 
     * @param configuration The configuration with which the exception handling
@@ -174,6 +175,23 @@ public final class ExceptionManager {
    
    /**
     * <p>
+    * Sets the configuration settings and mappings. If the configuration object
+    * is null then the configuration is read and loaded from the configuration
+    * file. 
+    * </p>
+    * 
+    * @param configuration The configuration tied to this instance. If null then
+    *       configuration file is used. 
+    */
+   private void setConfiguration(Configuration configuration) {
+      
+      this.configuration = (configuration == null) ? 
+            readConfiguration() :
+            configuration;
+   }
+   
+   /**
+    * <p>
     * Obtains the handler settings and mappings from the configuration file.
     * </p>
     * 
@@ -193,7 +211,9 @@ public final class ExceptionManager {
     * </p>
     */
    private void instantiateHandlers() {
-
+      
+      handlers = new TreeMap<String, CoreExceptionHandler>();
+      
       ArrayList<String> badHandlers = new ArrayList<String>();
       Set<String> handlerFqcnSet = configuration.getAllHandlers();
       
@@ -244,6 +264,22 @@ public final class ExceptionManager {
       }
       
       return handler;
+   }
+   
+   /**
+    * <p>
+    * Returns the active and valid handlers that are managed by this instance.
+    * </p>
+    * <p>
+    * This method is only exposed for testing purposes. Manipulation of this
+    * map will result in unexpected behavior.
+    * </p>
+    * 
+    * @return The active and valid handlers managed by this instance.
+    */
+   Map<String, CoreExceptionHandler> getHandlers() {
+      
+      return this.handlers;
    }
    
 }

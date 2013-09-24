@@ -65,6 +65,7 @@ public class XmlConfigurationParser implements ConfigurationParser {
       this.setResourceName(configResourceName);
    }
    
+   // TODO: remove at some point. only here for testing purposes.
    public static void main(String[] args) {
       
       try {
@@ -197,7 +198,6 @@ public class XmlConfigurationParser implements ConfigurationParser {
          Node handlerNode = nodeList.item(i);
          String handler = parseHandlerClassname(handlerNode);
          Collection<String> exceptions = parseHandlerExceptions(handlerNode);
-         System.out.println("handler = " + handler + ", exceptions = " + exceptions);
          configuration.addHandlerExceptions(handler, exceptions);
       }
    }

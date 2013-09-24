@@ -33,10 +33,12 @@ public interface CoreException {
    
    /**
     * <p>
-    * Returns the actual exception instance that was thrown.
+    * Returns the actual {@link java.lang.Throwable} exception instance that
+    * was thrown. If there is not a Throwable instance then null is returned.
     * </p>
     * 
-    * @return The actual exception instance that was thrown.
+    * @return The actual {@link java.lang.Throwable} exception instance that 
+    *       was thrown or null if this class is not a Throwable.
     */
    Throwable getException();
    

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <glitch>
 	<defaultHandlers>
-		<classname>DefaultHandler</classname>
+		<classname>ezbake.glitch.handler.DefaultExceptionHandler</classname>
 	</defaultHandlers>
 </glitch>
